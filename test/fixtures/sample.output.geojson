@@ -1,0 +1,29 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "A_shp",
+      "properties": {
+        "shape_id": "A_shp"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -122.48161,
+            37.61956
+          ],
+          [
+            -122.4107,
+            37.6443
+          ],
+          [
+            -122.30839,
+            37.65863
+          ]
+        ]
+      }
+    }
+  ]
+}

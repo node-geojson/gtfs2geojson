@@ -1,0 +1,24 @@
+{
+  "name": "gtfs2geojson",
+  "version": "1.0.0",
+  "description": "convert gtfs data into geojson files",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "tap test/*.test.js",
+    "docs": "documentation-readme README.md --section=API"
+  },
+  "keywords": [
+    "gtfs",
+    "data",
+    "convert"
+  ],
+  "author": "Tom MacWright",
+  "license": "ISC",
+  "devDependencies": {
+    "documentation-readme": "^2.0.0",
+    "tap": "^2.2.0"
+  }
+}
