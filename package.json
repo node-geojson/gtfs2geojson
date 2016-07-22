@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap test/*.test.js",
+    "test": "tap --coverage test/*.test.js",
     "docs": "documentation-readme README.md --section=API"
   },
   "keywords": [
@@ -19,7 +19,7 @@
   "license": "ISC",
   "devDependencies": {
     "documentation-readme": "^2.0.0",
-    "tap": "^2.2.0"
+    "tap": "^6.2.0"
   },
   "dependencies": {
     "dsv": "0.0.5"
