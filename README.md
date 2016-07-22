@@ -9,19 +9,17 @@ Convert [GTFS](https://developers.google.com/transit/gtfs/?hl=en) data into
 
 ## API
 
-### gtfs2geojson
 
-Parse GTFS data given as a string and return a GeoJSON FeatureCollection
+`lines(gtfs)`
+
+Parse GTFS shapes.txt data given as a string and return a GeoJSON FeatureCollection
 of features with LineString geometries.
 
+`stops(gtfs)`
 
-**Parameters**
+Parse GTFS stops.txt data given as a string and return a GeoJSON FeatureCollection
+of features with Point geometries.
 
--   `gtfs` **string** csv content of shapes.txt
-
-
-
-Returns **Object** geojson featurecollection
 
 
 
