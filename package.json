@@ -1,6 +1,6 @@
 {
   "name": "gtfs2geojson",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "convert gtfs data into geojson files",
   "main": "index.js",
   "directories": {
