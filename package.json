@@ -23,5 +23,9 @@
   },
   "dependencies": {
     "dsv": "0.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tmcw/gtfs2geojson.git"
   }
 }
