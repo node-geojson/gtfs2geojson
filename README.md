@@ -20,6 +20,6 @@ of features with LineString geometries.
 Parse GTFS stops.txt data given as a string and return a GeoJSON FeatureCollection
 of features with Point geometries.
 
+### See also
 
-
-
+* The [andrewharvey fork of gtfs2geojson](https://github.com/andrewharvey/gtfs2geojson) adds optimizations for large files. 
