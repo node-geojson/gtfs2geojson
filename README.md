@@ -1,5 +1,7 @@
 # gtfs2geojson
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/tmcw/gtfs2geojson.svg)](https://greenkeeper.io/)
+
 [![CircleCI](https://circleci.com/gh/tmcw/gtfs2geojson/tree/master.svg?style=svg)](https://circleci.com/gh/tmcw/gtfs2geojson/tree/master)<Paste>
 
 Convert [GTFS](https://developers.google.com/transit/gtfs/?hl=en) data into
