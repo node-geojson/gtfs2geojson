@@ -1,6 +1,8 @@
 # gtfs2geojson
 
-[![CircleCI](https://circleci.com/gh/tmcw/gtfs2geojson/tree/master.svg?style=svg)](https://circleci.com/gh/tmcw/gtfs2geojson/tree/master)<Paste>
+[![CircleCI](https://circleci.com/gh/tmcw/gtfs2geojson/tree/master.svg?style=shield)](https://circleci.com/gh/tmcw/gtfs2geojson/tree/master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/tmcw/gtfs2geojson.svg)](https://greenkeeper.io/)
+
 
 Convert [GTFS](https://developers.google.com/transit/gtfs/?hl=en) data into
 [GeoJSON](http://geojson.org/).
