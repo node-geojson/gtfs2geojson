@@ -4,7 +4,11 @@ var path = require('path');
 var gtfs2geojson = require('../');
 
 test('#routes', function(t) {
-  var result = gtfs2geojson.lines(path.join(__dirname, 'fixtures'), true);
+  var shapesInput = fs.readFileSync(path.join(__dirname, 'fixtures/shapes.input'), 'utf8')
+  var routesInput = fs.readFileSync(path.join(__dirname, 'fixtures/routes.input'), 'utf8')
+  var tripsInput = fs.readFileSync(path.join(__dirname, 'fixtures/trips.input'), 'utf8')
+
+  var result = gtfs2geojson.routes(shapesInput, routesInput, tripsInput);
 
   if (process.env.UPDATE) {
     fs.writeFileSync(path.join(__dirname, 'fixtures/routes.geojson'),
@@ -16,7 +20,7 @@ test('#routes', function(t) {
 });
 
 test('#shapes', function(t) {
-  var result = gtfs2geojson.lines(path.join(__dirname, 'fixtures'));
+  var result = gtfs2geojson.lines(fs.readFileSync(path.join(__dirname, 'fixtures/shapes.input'), 'utf8'));
 
   if (process.env.UPDATE) {
     fs.writeFileSync(path.join(__dirname, 'fixtures/shapes.geojson'),

@@ -1,9 +1,4 @@
 var parseCSV = require('dsv').csv.parse;
-var fs = require('fs');
-
-const fileToString = (fileLoc) => fs
-		.readFileSync(fileLoc)
-		.toString();
 
 const gtfs2geojson = {
   /**
@@ -13,29 +8,19 @@ const gtfs2geojson = {
  * @param {string} gtfs csv content of shapes.txt
  * @returns {Object} geojson featurecollection
  */
-  lines: function(gtfsLoc, joinRoutes = false) {
-		const shapesInput = fileToString(`${gtfsLoc}/shapes.txt`);
-		let routes;
-		let trips;
-
-		if(joinRoutes){
-			routes = parseCSV(fileToString(`${gtfsLoc}/routes.txt`));
-			trips = parseCSV(fileToString(`${gtfsLoc}/trips.txt`));
-		}
-
-    const shapes = parseCSV(shapesInput).reduce(function(memo, row) {
+  lines: function(gtfs) {
+    var shapes = parseCSV(gtfs).reduce(function(memo, row) {
       memo[row.shape_id] = (memo[row.shape_id] || []).concat(row);
       return memo;
     }, {});
-		
-    const tripFeatureCollection =  {
+    return {
       type: 'FeatureCollection',
       features: Object.keys(shapes).map(function(id) {
         return {
           type: 'Feature',
           id: id,
           properties: {
-            shape_id: id,
+            shape_id: id
           },
           geometry: {
             type: 'LineString',
@@ -44,16 +29,37 @@ const gtfs2geojson = {
             }).map(function(coord) {
               return [
                 parseFloat(coord.shape_pt_lon),
-                parseFloat(coord.shape_pt_lat),
+                parseFloat(coord.shape_pt_lat)
               ];
             })
           }
         };
       })
     };
-		if(!joinRoutes){
-			return tripFeatureCollection;
-		}else{
+  },
+
+  routes: function(shapesInput, routesInput, tripsInput) {
+    const shapes = parseCSV(shapesInput).reduce(function(memo, row) {
+      memo[row.shape_id] = (memo[row.shape_id] || []).concat(row);
+      return memo;
+    }, {});
+
+    const routes = parseCSV(routesInput);
+    const trips = parseCSV(tripsInput);
+		
+    const tripFeatureCollection =  Object.keys(shapes).map(function(id) {
+        return {
+          id: id,
+          coordinates: shapes[id].sort(function(a, b) {
+            return +a.shape_pt_sequence - b.shape_pt_sequence;
+          }).map(function(coord) {
+            return [
+              parseFloat(coord.shape_pt_lon),
+              parseFloat(coord.shape_pt_lat),
+            ];
+          })
+        }
+        });
 			const routeFeaturesCollection = {
 				type: 'FeatureCollection',
 				features: [],
@@ -61,8 +67,8 @@ const gtfs2geojson = {
 			for(const route of routes){
 				const filteredTrips = trips.filter(trip => trip.route_id === route.route_id);
 				const shapeIds = filteredTrips.map(trip => trip.shape_id);
-				const routeFeatures = tripFeatureCollection.features.filter(feature => shapeIds.includes(feature.properties.shape_id))
-						.map(feature => feature.geometry.coordinates);
+				const routeFeatures = tripFeatureCollection.filter(feature => shapeIds.includes(feature.id))
+						.map(feature => feature.coordinates);
 							routeFeaturesCollection.features.push({
 									type: 'Feature',
 									id: route.route_id,
@@ -77,7 +83,6 @@ const gtfs2geojson = {
 							});
 			}
 			return routeFeaturesCollection;
-		}
   },
 
   /**
