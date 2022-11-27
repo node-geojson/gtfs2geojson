@@ -1,7 +1,11 @@
 var parseCSV = require('dsv').csv.parse;
+var fs = require('fs');
 
+const fileToString = (fileLoc) => fs
+		.readFileSync(fileLoc)
+		.toString();
 
-var gtfs2geojson = {
+const gtfs2geojson = {
   /**
  * Parse GTFS shapes.txt data given as a string and return a GeoJSON FeatureCollection
  * of features with LineString geometries.
@@ -9,19 +13,29 @@ var gtfs2geojson = {
  * @param {string} gtfs csv content of shapes.txt
  * @returns {Object} geojson featurecollection
  */
-  lines: function(gtfs) {
-    var shapes = parseCSV(gtfs).reduce(function(memo, row) {
+  lines: function(gtfsLoc, joinRoutes = false) {
+		const shapesInput = fileToString(`${gtfsLoc}/shapes.txt`);
+		let routes;
+		let trips;
+
+		if(joinRoutes){
+			routes = parseCSV(fileToString(`${gtfsLoc}/routes.txt`));
+			trips = parseCSV(fileToString(`${gtfsLoc}/trips.txt`));
+		}
+
+    const shapes = parseCSV(shapesInput).reduce(function(memo, row) {
       memo[row.shape_id] = (memo[row.shape_id] || []).concat(row);
       return memo;
     }, {});
-    return {
+		
+    const tripFeatureCollection =  {
       type: 'FeatureCollection',
       features: Object.keys(shapes).map(function(id) {
         return {
           type: 'Feature',
           id: id,
           properties: {
-            shape_id: id
+            shape_id: id,
           },
           geometry: {
             type: 'LineString',
@@ -30,13 +44,40 @@ var gtfs2geojson = {
             }).map(function(coord) {
               return [
                 parseFloat(coord.shape_pt_lon),
-                parseFloat(coord.shape_pt_lat)
+                parseFloat(coord.shape_pt_lat),
               ];
             })
           }
         };
       })
     };
+		if(!joinRoutes){
+			return tripFeatureCollection;
+		}else{
+			const routeFeaturesCollection = {
+				type: 'FeatureCollection',
+				features: [],
+			};
+			for(const route of routes){
+				const filteredTrips = trips.filter(trip => trip.route_id === route.route_id);
+				const shapeIds = filteredTrips.map(trip => trip.shape_id);
+				const routeFeatures = tripFeatureCollection.features.filter(feature => shapeIds.includes(feature.properties.shape_id))
+						.map(feature => feature.geometry.coordinates);
+							routeFeaturesCollection.features.push({
+									type: 'Feature',
+									id: route.route_id,
+									properties: {
+										...route
+									},
+									geometry: {
+										type: 'MultiLineString',
+										coordinates: routeFeatures
+									}
+								
+							});
+			}
+			return routeFeaturesCollection;
+		}
   },
 
   /**
@@ -71,6 +112,6 @@ var gtfs2geojson = {
       })
     };
   }
-}
+};
 
 module.exports = gtfs2geojson;
