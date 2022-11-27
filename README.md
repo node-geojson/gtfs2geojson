@@ -17,6 +17,11 @@ Convert [GTFS](https://developers.google.com/transit/gtfs/?hl=en) data into
 Parse GTFS shapes.txt data given as a string and return a GeoJSON FeatureCollection
 of features with LineString geometries.
 
+`routes(shapes, routes, trips)`
+
+Parse GTFS shapes.txt, routes.txt, and trips.txt files to create a MultiLineString 
+geojson file that groups lines by route_id
+
 `stops(gtfs)`
 
 Parse GTFS stops.txt data given as a string and return a GeoJSON FeatureCollection
