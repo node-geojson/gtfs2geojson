@@ -1,7 +1,6 @@
 var parseCSV = require('dsv').csv.parse;
 
-
-var gtfs2geojson = {
+const gtfs2geojson = {
   /**
  * Parse GTFS shapes.txt data given as a string and return a GeoJSON FeatureCollection
  * of features with LineString geometries.
@@ -39,6 +38,53 @@ var gtfs2geojson = {
     };
   },
 
+  routes: function(shapesInput, routesInput, tripsInput) {
+    const shapes = parseCSV(shapesInput).reduce(function(memo, row) {
+      memo[row.shape_id] = (memo[row.shape_id] || []).concat(row);
+      return memo;
+    }, {});
+
+    const routes = parseCSV(routesInput);
+    const trips = parseCSV(tripsInput);
+		
+    const tripFeatureCollection =  Object.keys(shapes).map(function(id) {
+        return {
+          id: id,
+          coordinates: shapes[id].sort(function(a, b) {
+            return +a.shape_pt_sequence - b.shape_pt_sequence;
+          }).map(function(coord) {
+            return [
+              parseFloat(coord.shape_pt_lon),
+              parseFloat(coord.shape_pt_lat),
+            ];
+          })
+        }
+        });
+			const routeFeaturesCollection = {
+				type: 'FeatureCollection',
+				features: [],
+			};
+			for(const route of routes){
+				const filteredTrips = trips.filter(trip => trip.route_id === route.route_id);
+				const shapeIds = filteredTrips.map(trip => trip.shape_id);
+				const routeFeatures = tripFeatureCollection.filter(feature => shapeIds.includes(feature.id))
+						.map(feature => feature.coordinates);
+							routeFeaturesCollection.features.push({
+									type: 'Feature',
+									id: route.route_id,
+									properties: {
+										...route
+									},
+									geometry: {
+										type: 'MultiLineString',
+										coordinates: routeFeatures
+									}
+								
+							});
+			}
+			return routeFeaturesCollection;
+  },
+
   /**
  * Parse GTFS stops.txt data given as a string and return a GeoJSON FeatureCollection
  * of features with Point geometries.
@@ -71,6 +117,6 @@ var gtfs2geojson = {
       })
     };
   }
-}
+};
 
 module.exports = gtfs2geojson;
